@@ -1,0 +1,24 @@
+{
+  "name": "presaledemo",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node ./index.js",
+    "start:watch": "nodemon ./index.js"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "./forestadmin-schema.json"
+    ]
+  },
+  "dependencies": {
+    "@forestadmin/agent": "^1.0.0",
+    "@forestadmin/datasource-sql": "^1.0.0",
+    "dotenv": "^16.0.1",
+    "forest-express": "^10.2.5",
+    "pg": "^8.8.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  }
+}
