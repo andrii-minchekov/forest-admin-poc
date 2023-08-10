@@ -47,7 +47,7 @@ const pool = new Pool({
 agent.customizeCollection('snippets', collection => {
     // Actions are documented here:
     // https://docs.forestadmin.com/developer-guide-agents-nodejs/agent-customization/actions
-    collection.addAction('New Custom Action', {
+    collection.addAction('New Custom Smart Action', {
         scope: 'Single', // This action can be triggered product by product
         form: [{label: 'Quantity', type: 'Number', isRequired: true}],
         execute: async (context, resultBuilder) => {

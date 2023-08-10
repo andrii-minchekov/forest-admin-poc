@@ -266,7 +266,7 @@
       "segments": []
     }
   ],
-  "metadata": {
+  "meta": {
     "liana": "forest-nodejs-agent",
     "liana_version": "1.13.4",
     "liana_features": null,
