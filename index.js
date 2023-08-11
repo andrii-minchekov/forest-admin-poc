@@ -1,34 +1,34 @@
 require('dotenv').config();
-const { createAgent } = require('@forestadmin/agent');
-const { createSqlDataSource } = require('@forestadmin/datasource-sql');
+const {createAgent} = require('@forestadmin/agent');
+const {createSqlDataSource} = require('@forestadmin/datasource-sql');
 
 // Create the Forest Admin agent.
 /**
  * @type {import('@forestadmin/agent').Agent<import('./typings').Schema>}
  */
 const agent = createAgent({
-  // Security tokens
-  authSecret: process.env.FOREST_AUTH_SECRET,
-  envSecret: process.env.FOREST_ENV_SECRET,
+    // Security tokens
+    authSecret: process.env.FOREST_AUTH_SECRET,
+    envSecret: process.env.FOREST_ENV_SECRET,
 
-  // Make sure to set NODE_ENV to 'production' when you deploy your project
-  isProduction: process.env.NODE_ENV === 'production',
+    // Make sure to set NODE_ENV to 'production' when you deploy your project
+    isProduction: process.env.NODE_ENV === 'production',
 
-  // Autocompletion of collection names and fields
-  typingsPath: './typings.ts',
-  typingsMaxDepth: 5,
+    // Autocompletion of collection names and fields
+    typingsPath: './typings.ts',
+    typingsMaxDepth: 5,
 });
 
 // Connect your datasources
 // All options are documented at https://docs.forestadmin.com/developer-guide-agents-nodejs/data-sources/connection
 agent.addDataSource(
-  createSqlDataSource({
-    uri: process.env.DATABASE_URL,
-    schema: process.env.DATABASE_SCHEMA,
-    sslMode: process.env.DATABASE_SSL_MODE,
-  }),
+    createSqlDataSource({
+        uri: process.env.DATABASE_URL,
+        schema: process.env.DATABASE_SCHEMA,
+        sslMode: process.env.DATABASE_SSL_MODE,
+    }),
 );
-const { Pool } = require('pg');
+const {Pool} = require('pg');
 
 const pool = new Pool({
     user: 'postgres',
@@ -59,19 +59,20 @@ agent.customizeCollection('snippets', collection => {
             return resultBuilder.success(`Your snippet for a batch of ${quantity} '${product.title}' was sent`);
         }
     });
+
+    collection.addField('total', {columnType: 'Number', dependencies: ["title"], getValues: (records, context) => records.map(r => records.length)});
 });
 
-const { collection } = require('forest-express');
-
+const {collection} = require('forest-express');
 
 collection('snippets', {
     fields: [{
         field: 'id',
         type: 'Number'
-    },{
+    }, {
         field: 'title',
         type: 'String'
-    }
+    },
     ],
     segments: [{
         name: 'Narrow-Snippets',
@@ -87,27 +88,11 @@ collection('snippets', {
                 });
             });
 
-            return { id: { $in: results.map((r) => r.id) } };
+            return {id: {$in: results.map((r) => r.id)}};
         }
     }]
 });
 
-// agent.customizeCollection('maps', collection => {
-//     // Actions are documented here:
-//     // https://docs.forestadmin.com/developer-guide-agents-nodejs/agent-customization/actions
-//     collection.addAction('New Custom Action', {
-//         scope: 'Single', // This action can be triggered product by product
-//         form: [{label: 'Quantity', type: 'Number', isRequired: true}],
-//         execute: async (context, resultBuilder) => {
-//             const product = await context.getRecord(['id', 'title'])
-//             const quantity = context.formValues['Quantity'];
-//
-//             // ... Perform work here ...
-//
-//             return resultBuilder.success(`Your snippet for a batch of ${quantity} '${product.title}' was sent`);
-//         }
-//     });
-// })
 
 //   // Search customization is documented here:
 //   // https://docs.forestadmin.com/developer-guide-agents-nodejs/agent-customization/search
@@ -126,8 +111,8 @@ agent.mountOnStandaloneServer(Number(process.env.APPLICATION_PORT));
 
 // Start the agent.
 agent.start().catch(error => {
-  console.error('\x1b[31merror:\x1b[0m Forest Admin agent failed to start\n');
-  console.error('');
-  console.error(error.stack);
-  process.exit(1);
+    console.error('\x1b[31merror:\x1b[0m Forest Admin agent failed to start\n');
+    console.error('');
+    console.error(error.stack);
+    process.exit(1);
 });

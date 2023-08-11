@@ -15,6 +15,7 @@ export type Schema = {
       'created': string;
       'expires': string;
       'user_id': number;
+      'total': number;
     };
     nested: {
       'user': Schema['users']['plain'] & Schema['users']['nested'];
